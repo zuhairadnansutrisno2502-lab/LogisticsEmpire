@@ -7,7 +7,7 @@ Every task: define acceptance criteria → implement → self-critique → run t
 **Setup is done** (Claude, Laptop 2). Do not re-run `docs/CLAUDE_SETUP_ORCHESTRATOR.md`; only fix items in `docs/SETUP_STATUS.md` that are not `DONE`. Codex never redoes GitHub bootstrap or Rojo integration.
 
 ## Branches
-Codex `visual/codex` (+ `visual/<task>` for parallel subagents), Claude `systems/claude` (+ `systems/<task>`), integrator `integration/<task>`. CI `ownership` maps each prefix to its paths. Codex starts at `docs/CODEX_START_HERE.md`.
+Codex `visual/codex` (+ `visual/<task>` for parallel subagents), Claude `systems/claude` (+ `systems/<task>`), integrator `integration/<task>`. CI `ownership` maps each prefix to its paths. Codex starts at `docs/CODEX_START_HERE.md`. Jobdesks and backlogs: `docs/ROLES.md`. Game design: `docs/PROJECT_SPEC.md`.
 
 ## Guards (both laptops)
 - Once per clone: `git config core.hooksPath .githooks`. The pre-push hook blocks pushes to `main` and runs the CI checks (+ Luau tests if `lune` is installed) before anything leaves the laptop.
