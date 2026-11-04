@@ -14,7 +14,6 @@ else
   echo "WARN: no origin remote yet; serving local main only"
 fi
 python3 -m json.tool default.project.json >/dev/null
-python3 scripts/test_project.py
 if [ "$1" = "--serve" ]; then
   echo "Starting Rojo. Open the EXISTING (or staging copy) place in Studio and click Connect in the Rojo plugin."
   exec rojo serve default.project.json

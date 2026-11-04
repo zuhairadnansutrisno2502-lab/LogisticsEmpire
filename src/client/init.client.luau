@@ -1,11 +1,4 @@
 --!strict
--- Logistics Empire client bootstrap (Claude-owned): builds the data Store and mounts Codex's UI.
-local Store = require(script:WaitForChild("Controllers"):WaitForChild("Store"))
-
-local ui = script:FindFirstChild("UI")
-local app = ui and ui:FindFirstChild("App")
-if app and app:IsA("ModuleScript") then
-	require(app).mount(Store)
-else
-	warn("[Client] Store ready; UI/App not found yet, nothing mounted")
-end
+-- Logistics Empire client bootstrap (Claude-owned): starts the data Store.
+-- Codex's UI (LocalScripts in StarterGui) requires the same Store module; see docs/API_CONTRACT.md.
+require(script:WaitForChild("Controllers"):WaitForChild("Store"))

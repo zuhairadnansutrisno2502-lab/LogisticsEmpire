@@ -1,22 +1,35 @@
-# LOGISTICS EMPIRE — Dual Agent Starter v2
+# Logistics Empire
 
-UI-first Roblox logistics tycoon starter with separate **Codex visual** and **Claude Opus backend** prompts, GitHub branch ownership enforcement, safe agent polling, CI validation, and single-integrator Rojo workflow.
+UI-first Roblox logistics tycoon. **One Roblox place, two AI agents on two laptops, working live together.**
 
-**NEW: Claude on Laptop 2 owns all automation preparation. Start Claude with `docs/CLAUDE_SETUP_ORCHESTRATOR.md`; Claude performs the GitHub, CI, bridge, onboarding and Rojo preparation where authorized. One-time account login, Roblox Team Create invitations and Studio plugin connection may still require the user. See `docs/SETUP_STATUS.md`.**
+## How we work
+| | **Codex — Laptop 1** | **Claude Code — Laptop 2** |
+|---|---|---|
+| Job | Visual design, UI/UX, art | All technical code |
+| Works in | Roblox Studio directly (Team Create) via Studio MCP. No git or GitHub needed. | This repo. Rojo pushes merged code into Studio automatically. |
+| Owns in the place | `StarterGui` (all UI + UI LocalScripts), `ReplicatedStorage.Art` (Theme, images, small models), `Workspace`, `Lighting` | `ServerScriptService.LogisticsServer`, `ReplicatedStorage.Shared`, `StarterPlayer.StarterPlayerScripts.LogisticsClient` |
+| Accounts | its own Roblox account (Team Create editor) | owner GitHub + Roblox `tncrabe` |
+| Brief | [`docs/CODEX.md`](docs/CODEX.md) | [`AGENTS.md`](AGENTS.md) |
 
-**Start here:** `docs/BRIDGE_RUNBOOK.md` → `docs/PROJECT_SPEC.md` → `docs/OWNERSHIP.md` → role prompt in `docs/CODEX_MASTER_PROMPT.md` or `docs/CLAUDE_MASTER_PROMPT.md`.
+- **Live:** Team Create shows each laptop's Studio edits to the other within seconds. Claude's code reaches Studio about 30 s after merge (Laptop 2 auto-sync).
+- **Never edit the other side's area.** Rojo overwrites anything inside Claude's three paths.
+- **Talk through the Team Board** in the place: `ServerStorage.TeamBoard.ToClaude` (Codex writes) and `ServerStorage.TeamBoard.ToCodex` (Claude writes). Read your inbox at the start of every task. Append dated lines; never edit the other side's note.
+- **UI data** comes only from the client Store: [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) → Client Store.
+- **What to build:** [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md) (game design) + [`docs/reference/dashboard.webp`](docs/reference/dashboard.webp) (visual target).
 
-## Windows quick start
-1. Create a **private, empty** GitHub repository named `LogisticsEmpire` (do not initialize README).
-2. Extract this ZIP and run in PowerShell from its `LogisticsEmpire` folder:
+## The place
+**Logistics Empire**: placeId `104352461543313`, universe `10774614134`, owner `tncrabe`, Team Create on, Drafts off, not published.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/bootstrap_repo.ps1 -RepoUrl https://github.com/YOUR_USERNAME/LogisticsEmpire.git
-```
+## Laptop 2 plumbing
+- Auto-sync service (`scripts/install_autosync_macos.sh`, installed): keeps Rojo serving on port 34872 and fast-forwards `main` every 30 s in `~/Projects/LogisticsEmpire-integrator`. Log: `~/Library/Logs/LogisticsEmpire-integrator.log`.
+- Studio on Laptop 2 keeps the Rojo plugin connected to `localhost:34872`. After a Studio restart, click Connect once.
+- `main` is protected: changes land by PR and must pass the `test` check (`.github/workflows/validate.yml`: project JSON + Lune tests). The pre-push hook (`git config core.hooksPath .githooks`) runs the same checks locally.
 
-3. On laptop 1: `git clone <repo-url>`; `git switch visual/codex`; open Codex with `docs/CODEX_MASTER_PROMPT.md`.
-4. On laptop 2: `git clone <repo-url>`; `git switch systems/claude`; open Claude Code with `docs/CLAUDE_MASTER_PROMPT.md`.
-5. Optional safe main polling on each laptop: `powershell -ExecutionPolicy Bypass -File scripts/agent_watch.ps1 -Role codex` (or `claude`). This **only fetches and fast-forwards** where safe; it does not run an AI agent, commit, push, or merge divergent branches.
-6. After PR review/merge, on one integrator laptop: `powershell -ExecutionPolicy Bypass -File scripts/integrator_sync.ps1 -Serve`. Connect the Rojo Studio plugin in the **existing** Roblox experience. Test mapping on staging first.
+## Status (2026-11-04)
+- **LIVE:** backend v0.2 (contracts, fleet, routes, timed deliveries, exactly-once payout, persistence), client Store, Laptop 2 auto-sync. Playtested in the place.
+- **Next, Claude:** API v0.3 (issue #4): single-level warehouse, research, cargo names, revenue stats, Indonesian cities.
+- **Next, Codex:** backlog in `docs/CODEX.md`.
+- **Waiting for the owner:** invite Codex's Roblox account to Team Create (Edit); set up Studio MCP for Codex on Laptop 1.
 
-**Important:** GitHub repository creation, access grants, Studio plugin connection, and branch protection require authorized account actions. No real-time Studio connection or GitHub automation is running merely because you downloaded this starter. CI covers ownership and starter structural checks; it is **not** a substitute for Luau linting, gameplay tests, or Studio playtests. No auto-merge or auto-publish.
+## Safety
+Never publish the experience, create product IDs or enable purchases without the owner. The server decides everything. Studio edits roll back via File → Version History; code rolls back via git.

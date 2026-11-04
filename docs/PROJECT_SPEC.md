@@ -136,8 +136,8 @@ UI copy is Indonesian as in the reference (nav labels may stay English). Keep ev
 - anything else → "Something went wrong"
 
 ## 14. Visual and 3D direction
-- Palette and style per the reference: Primary blue `#2D6FE1`, Background `#F7F9FC` (`VisualConfig`), deep navy sidebar with a bright active pill, white cards with soft shadows and rounded corners, green for positive numbers and progress, gold for VIP/premium, bold rounded headings. Never a dense dark dashboard.
-- Art set (images, glossy isometric 3D-render style): network hero, 4 delivery scenes (motorcycle city, truck highway, aircraft airport, ship port), 4 vehicle card images, warehouse (look grows with level), VIP promo, icon set. Uploaded from the owner account in Studio; image IDs live in `VisualConfig`.
+- Palette and style per the reference: Primary blue `#2D6FE1`, Background `#F7F9FC` (`ReplicatedStorage.Art.Theme`, Codex-owned in Studio), deep navy sidebar with a bright active pill, white cards with soft shadows and rounded corners, green for positive numbers and progress, gold for VIP/premium, bold rounded headings. Never a dense dark dashboard.
+- Art set (images, glossy isometric 3D-render style): network hero, 4 delivery scenes (motorcycle city, truck highway, aircraft airport, ship port), 4 vehicle card images, warehouse (look grows with level), VIP promo, icon set. Uploaded by Codex with permission granted to the experience; IDs live in `ReplicatedStorage.Art.Theme`. The UI is built directly in Studio (`StarterGui`).
 - Live 3D (ViewportFrame) only where cheap and optional, e.g. a small rotating vehicle on the Fleet detail. No large 3D scenes.
 - Performance: images ≤ 1024 px and reused across screens. The UI must work if an image fails to load.
 - Audio (IDEA): soft UI clicks and a delivery-complete chime.
