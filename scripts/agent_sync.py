@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Safe fast-forward-only integration of origin/main into an agent branch."""
+"""Safe sync of origin/main into an agent branch: fast-forward, or a conflict-free merge.
+Aborts on any conflict and never pushes."""
 import argparse
 import subprocess
 import sys
@@ -37,7 +38,13 @@ def main():
         git('merge','--ff-only','origin/main')
         print('OK: fast-forwarded to origin/main')
         return 0
-    print('BLOCKED: branches diverged; create/review an explicit integration merge or rebase')
+    # Both sides moved. Ownership keeps the agents' paths disjoint, so merging main in is
+    # normally clean; on any conflict, abort and leave the branch exactly as it was.
+    if subprocess.run(['git', 'merge', '--no-edit', '-q', 'origin/main']).returncode == 0:
+        print('OK: merged origin/main into branch (not pushed)')
+        return 0
+    subprocess.run(['git', 'merge', '--abort'])
+    print('BLOCKED: merge conflict with origin/main; resolve deliberately')
     return 3
 
 if __name__ == '__main__':
