@@ -25,6 +25,16 @@ Record task, threat model, failure cases, root causes, regression tests, evidenc
 - `selene` (std roblox) on `src/` → 0 errors, 0 warnings. `luau-lsp analyze` (strict) on Rules/Contracts/Types → clean.
 - `rojo build default.project.json` → OK.
 
-**Not run:** Roblox Studio playtest (no place could be opened from background control), DataStore session-lock behaviour against real servers, multi-server lock contention. `PlayerData` and `init.server.luau` are covered by lint/build only.
+- **Roblox Studio playtest (2026-11-04, Studio + Rojo 7.7.0, unpublished test place synced from `systems/claude`)**, driven from the client via the remotes:
+  - load: cash 1000, level 1, 1 Motorcycle Available, 6 contracts
+  - `{contractId=123}` and `"garbage"` → `BadRequest`; back-to-back call → `RateLimited`
+  - dispatch c2 Industrial→Suburbs 18 km → ok, cash 982, vehicle Delivering, completes in 18 s
+  - replay of the same dispatch → `UnknownContract`
+  - after server time: cash 1050 (+68 once), xp 6, vehicle Available; 3 s later still 1050 (paid once)
+  - buy Motorcycle → ok (cash 550, fleet 2); buy Ship → `InsufficientFunds`
+  - client received StateUpdated ×4, DeliveryUpdated InTransit+Completed, Notification "Delivery complete: +68 cash"
+  - unpublished place → DataStore unavailable → in-memory fallback warning, as designed
+
+**Not run:** DataStore persistence/session lock against real servers (needs the PR merged into the published experience and API access), multi-server lock contention.
 
 **Remaining risks / next:** Studio smoke test of the full loop; Lune CI job (needs an integrator PR to `.github/`); warehouse/research/expansion/monetization services; vehicle selling would break the never-stuck guarantee (noted in code).
