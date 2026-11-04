@@ -1,6 +1,6 @@
 # Laptop 1 — Codex onboarding
 
-Repository (private): https://github.com/zuhairadnansutrisno2502-lab/LogisticsEmpire
+Repository (public): https://github.com/zuhairadnansutrisno2502-lab/LogisticsEmpire
 Your branch: `visual/codex`. Laptop 2 (Claude) is the **only** Rojo integrator — do not run `rojo serve` against the shared Studio place from Laptop 1.
 
 ## 1. Tools
@@ -8,7 +8,7 @@ Your branch: `visual/codex`. Laptop 2 (Claude) is the **only** Rojo integrator �
 - Optional for local UI previews in a **private test place only**: Roblox Studio, Rokit (`rokit install` reads `rokit.toml`: rojo 7.7.0, selene, stylua, lune).
 
 ## 2. GitHub access
-The repo owner must give the Laptop 1 GitHub account access (or Laptop 1 signs in as the owner):
+Reading is public; pushing needs the owner account or a collaborator invite (Settings → Collaborators):
 ```
 gh auth login        # interactive browser sign-in, never paste tokens into files
 gh repo view zuhairadnansutrisno2502-lab/LogisticsEmpire
@@ -19,6 +19,7 @@ gh repo view zuhairadnansutrisno2502-lab/LogisticsEmpire
 git clone https://github.com/zuhairadnansutrisno2502-lab/LogisticsEmpire.git
 cd LogisticsEmpire
 git switch visual/codex
+git config core.hooksPath .githooks   # pre-push guard: blocks pushes to main, runs CI checks locally
 ```
 
 ## 4. Start Codex

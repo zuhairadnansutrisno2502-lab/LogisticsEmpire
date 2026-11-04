@@ -1,0 +1,40 @@
+#!/bin/sh
+# Local guard for both laptops (works in Git Bash on Windows too). Enable once per clone:
+#   git config core.hooksPath .githooks
+# 1) Refuses any push to main: changes reach main only through reviewed PRs.
+# 2) Runs the same checks as CI before the push leaves the laptop.
+# Emergency bypass (integrator only, after review): git push --no-verify
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+	if [ "$remote_ref" = "refs/heads/main" ]; then
+		echo "pre-push: direct push to main is blocked. Push your branch and open a PR." >&2
+		exit 1
+	fi
+done
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+PY=$(command -v python3 || command -v python)
+[ -n "$PY" ] || { echo "pre-push: python not found" >&2; exit 1; }
+fail() { echo "pre-push: $1 failed, push cancelled." >&2; exit 1; }
+
+"$PY" -m json.tool default.project.json >/dev/null || fail "project-validation (default.project.json)"
+"$PY" -m py_compile scripts/*.py || fail "project-validation (python syntax)"
+"$PY" scripts/test_project.py >/dev/null 2>&1 || fail "python-tests"
+
+branch=$(git branch --show-current)
+case "$branch" in
+visual/codex | systems/claude)
+	git fetch -q origin main 2>/dev/null
+	HEAD_REF="$branch" BASE_REF=origin/main "$PY" scripts/check_ownership.py || fail "ownership"
+	;;
+esac
+
+if command -v lune >/dev/null 2>&1; then
+	for t in tests/*.spec.luau; do
+		[ -e "$t" ] || continue
+		lune run "$t" || fail "luau tests ($t)"
+	done
+else
+	echo "pre-push: lune not installed, Luau tests skipped (run 'rokit install')."
+fi
+echo "pre-push: all checks passed."
