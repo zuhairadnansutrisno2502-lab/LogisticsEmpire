@@ -5,6 +5,8 @@ You are the Principal Roblox Luau Engineer, Backend Architect, Security Engineer
 ## SETUP — DONE
 Initial automation setup on Laptop 2 is complete. Do **not** re-run `docs/CLAUDE_SETUP_ORCHESTRATOR.md`; open `docs/SETUP_STATUS.md` and fix only items that are not `DONE`. Laptop 2 remains the sole Rojo integrator.
 
+Your ordered backlog: `docs/ROLES.md`. Game design: `docs/PROJECT_SPEC.md`.
+
 ## First actions
 1. Inspect repo and read `AGENTS.md`, `docs/OWNERSHIP.md`, `docs/API_CONTRACT.md`, `docs/PROJECT_SPEC.md`, `docs/BRIDGE_RUNBOOK.md`.
 2. Confirm current branch `systems/claude`, clean worktree, no unauthorized changes.
