@@ -1,6 +1,6 @@
 # Logistics Empire — Shared Agent Rules
 
-This repository is for ONE shared Roblox experience (see `docs/SETUP_STATUS.md`); do not create or publish another place. Codex owns visual/client UI and 3D assets; Claude owns backend/services and contracts. Follow branch and ownership boundaries (`docs/OWNERSHIP.md`). Never force push, auto-merge failing PRs, grant Robux, enable real products, or publish a live experience without explicit approval. Only one Rojo integrator (Laptop 2) syncs the shared Studio tree.
+This repository is for ONE shared Roblox experience, **Logistics Empire** (placeId `104352461543313`); do not create or publish another place. Codex owns visual/client UI and 3D assets; Claude owns backend/services and contracts. Follow branch and ownership boundaries (`docs/OWNERSHIP.md`). Never force push, auto-merge failing PRs, grant Robux, enable real products, or publish a live experience without explicit approval. Only one Rojo integrator (Laptop 2) syncs the shared Studio tree.
 
 Every task: define acceptance criteria → implement → self-critique → run tests → improve → open PR → cross-review → integration verification. Three failed repair cycles on the same root cause: document blocker, do not silently weaken tests. Update quality logs in your OWN branch. Mark tests 'not run' unless actually executed. Shared documents are changed by proposal/PR, not simultaneous edits. A successful git push is not evidence of Roblox Studio synchronization.
 

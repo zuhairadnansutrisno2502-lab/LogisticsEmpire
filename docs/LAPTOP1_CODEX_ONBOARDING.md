@@ -22,6 +22,9 @@ git switch visual/codex
 git config core.hooksPath .githooks   # pre-push guard: blocks pushes to main, runs CI checks locally
 ```
 
+## 3b. Studio (live collaboration)
+Open Roblox Studio → experience **Logistics Empire** (placeId `104352461543313`, Team Create). Your 3D/Workspace edits sync live to Laptop 2. Scripts only arrive via merged PRs (Laptop 2's Rojo). Never connect your own Rojo to this place.
+
 ## 4. Start Codex
 Open Codex in the repo with `docs/CODEX_MASTER_PROMPT.md` as the prompt. Codex must NOT redo GitHub bootstrap or Rojo setup (already owned by Claude on Laptop 2, see `docs/SETUP_STATUS.md`).
 
