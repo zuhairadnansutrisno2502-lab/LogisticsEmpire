@@ -6,7 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Contracts = require(ReplicatedStorage.Shared.Contracts)
-local Rules = require(script.Services.Rules)(Contracts)
+local Rules = require(ReplicatedStorage.Shared.Contracts.Rules)(Contracts)
 local PlayerData = require(script.Services.PlayerData)(Rules)
 
 local MIN_CALL_INTERVAL = 0.1 -- per player, across all request remotes

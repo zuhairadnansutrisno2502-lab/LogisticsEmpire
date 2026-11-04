@@ -35,6 +35,24 @@ Record task, threat model, failure cases, root causes, regression tests, evidenc
   - client received StateUpdated ×4, DeliveryUpdated InTransit+Completed, Notification "Delivery complete: +68 cash"
   - unpublished place → DataStore unavailable → in-memory fallback warning, as designed
 
-**Not run:** DataStore persistence/session lock against real servers (needs the PR merged into the published experience and API access), multi-server lock contention.
+- **Persistence in the real experience (2026-11-04, after PR #2 merge, Rojo from `main`, Studio API access enabled by owner):**
+  - session 1: fresh load cash 1000 → buy Motorcycle (v8) → dispatch 18 s job (payout 74) → stop (BindToClose save). No DataStore warnings.
+  - session 2: cash 482, fleet [v1 Delivering, v8 Available], 1 active delivery, version 4 → state survived; delivery then paid: cash 556, xp 7, v1 Available, version 5.
+  - session 3: cash 556, xp 7, both vehicles Available, 0 active, version 5 → saved and **not paid twice**.
+  - Without API access the same build falls back to an unsaved in-memory session (observed earlier), as designed.
+
+**Not run:** multi-server session-lock contention (Studio JobId is empty, so the lock path between two live servers is untested until a live/private-server test).
 
 **Remaining risks / next:** Studio smoke test of the full loop; Lune CI job (needs an integrator PR to `.github/`); warehouse/research/expansion/monetization services; vehicle selling would break the never-stuck guarantee (noted in code).
+
+## 2026-11-04 — Client Store + bootstrap (ROLES backlog #1)
+
+**Acceptance criteria:** Codex's UI gets all data through one Store (no remotes); state loads with retry while the server reads DataStore; newer `StateUpdated` replaces state and notifies listeners; previews never offer a choice the server rejects; error codes become player-facing text; bootstrap mounts `UI/App` when it exists.
+
+**Design:** `Rules` moved to `src/shared/Contracts/Rules.luau`, so server and client use one copy of the formulas. New pure `Rules.options / progress / summary`. `Store.luau` is thin glue: remotes, listeners (`task.spawn` so a broken UI listener cannot break the Store), version check, `pcall` around `InvokeServer`, server time via `Workspace:GetServerTimeNow()`.
+
+**Threat / failure cases:** stale or out-of-order `StateUpdated` (version check); a remote error or timeout (pcall → fallback message); a UI listener erroring (isolated); a client tampering with previews (display only, the server re-validates); first load racing DataStore (retry every 1 s until state arrives).
+
+**Evidence:** `lune run tests/rules.spec.luau` → 17 passed (new: options mirror dispatch, and every offered option is accepted by `Rules.dispatch`; busy/over-capacity/late cases; progress clamps; summary counts). selene 0/0, luau-lsp strict on shared Rules clean, `rojo build` OK.
+
+**Not run yet:** Studio playtest of `Store` (runs after merge, when Laptop 2 auto-sync puts `main` into Logistics Empire).

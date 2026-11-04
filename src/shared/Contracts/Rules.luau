@@ -1,6 +1,7 @@
 --!strict
--- Pure, synchronous game rules (Claude-owned): player state schema, contracts board, fleet,
--- routes, dispatch, delivery completion. No Roblox APIs and no yields, so every mutation is
+-- Pure, synchronous game rules (Claude-owned), shared by server and client: player state schema,
+-- contracts board, fleet, routes, dispatch, delivery completion, client previews. The client uses it
+-- for display only; the server re-validates every request. No Roblox APIs and no yields, so every mutation is
 -- atomic on the single-threaded server and the whole module runs under Lune tests.
 -- ponytail: one rules module for the vertical slice; split into Economy/Fleet/Delivery files
 -- when it outgrows ~400 lines.
@@ -85,7 +86,7 @@ return function(C: any)
 		return data
 	end
 
-	local function canDrive(vehicleType: string, route: any): boolean
+	local function canDrive(vehicleType: string, route: any): boolean -- also Rules.canDrive
 		local v = C.Vehicles[vehicleType]
 		return v.mode == route.mode and route.distanceKm <= (v.maxRangeKm or math.huge)
 	end
@@ -258,6 +259,68 @@ return function(C: any)
 		table.insert(state.fleet, vehicle)
 		state.version += 1
 		return true, vehicle
+	end
+
+	Rules.canDrive = canDrive
+
+	-- Client preview: one option per Available vehicle type × each route it can drive for this contract,
+	-- fastest first. Mirrors the dispatch checks so the UI only offers choices the server accepts.
+	function Rules.options(state: any, contract: any, now: number)
+		local out, seen = {}, {}
+		for _, v in state.fleet do
+			local spec = C.Vehicles[v.type]
+			if v.status == "Available" and not seen[v.type] and table.find(contract.allowedVehicleTypes, v.type) and contract.cargoKg <= spec.capacityKg then
+				seen[v.type] = true
+				for _, r in C.Routes do
+					if r.originId == contract.originId and r.destinationId == contract.destinationId and canDrive(v.type, r) then
+						local seconds, cost = Rules.durationFor(v.type, r), Rules.costFor(v.type, r)
+						table.insert(out, {
+							vehicle = v,
+							route = r,
+							cost = cost,
+							seconds = seconds,
+							onTime = now + seconds <= contract.deadlineAt,
+							affordable = state.cash >= cost,
+						})
+					end
+				end
+			end
+		end
+		table.sort(out, function(a, b)
+			return a.seconds < b.seconds
+		end)
+		return out
+	end
+
+	function Rules.progress(delivery: any, now: number): number
+		local span = delivery.completesAt - delivery.startedAt
+		return if span <= 0 then 1 else math.clamp((now - delivery.startedAt) / span, 0, 1)
+	end
+
+	function Rules.summary(state: any)
+		local fleet, routes, activeRoutes = {}, {}, 0
+		for _, t in C.VehicleTypes do
+			fleet[t] = { count = 0, busy = 0 }
+		end
+		for _, v in state.fleet do
+			fleet[v.type].count += 1
+			if v.status ~= "Available" then
+				fleet[v.type].busy += 1
+			end
+		end
+		for _, d in state.activeDeliveries do
+			if not routes[d.routeId] then
+				routes[d.routeId] = true
+				activeRoutes += 1
+			end
+		end
+		return {
+			activeDeliveries = #state.activeDeliveries,
+			activeRoutes = activeRoutes,
+			hubs = #C.Locations,
+			routes = #C.Routes,
+			fleet = fleet,
+		}
 	end
 
 	-- Client-facing PlayerState (API_CONTRACT). Remotes serialize a copy, so the live tables
