@@ -1,0 +1,6 @@
+# Toolchain pinned to the versions already installed on Laptop 2. `rokit install` reproduces it.
+[tools]
+rojo = "rojo-rbx/rojo@7.7.0"
+selene = "kampfkarren/selene@0.31.0"
+stylua = "johnnymorganz/stylua@2.5.2"
+lune = "lune-org/lune@0.10.5"

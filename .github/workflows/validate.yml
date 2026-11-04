@@ -1,0 +1,32 @@
+name: Validate Pull Request
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  ownership:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ownership gate
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: origin/${{ github.base_ref }}
+        run: python3 scripts/check_ownership.py
+  project-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate project configuration
+        run: python3 -m json.tool default.project.json > /dev/null
+      - name: Check Python syntax
+        run: python3 -m compileall -q scripts
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run starter structural tests
+        run: python3 scripts/test_project.py

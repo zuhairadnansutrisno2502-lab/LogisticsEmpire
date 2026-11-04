@@ -1,0 +1,9 @@
+*.rbxl.lock
+*.rbxlx.lock
+.DS_Store
+*.log
+.env
+.rojo-cache/
+__pycache__/
+*.rbxl
+*.rbxlx
