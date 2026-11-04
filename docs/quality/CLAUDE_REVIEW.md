@@ -35,6 +35,12 @@ Record task, threat model, failure cases, root causes, regression tests, evidenc
   - client received StateUpdated ×4, DeliveryUpdated InTransit+Completed, Notification "Delivery complete: +68 cash"
   - unpublished place → DataStore unavailable → in-memory fallback warning, as designed
 
-**Not run:** DataStore persistence/session lock against real servers (needs the PR merged into the published experience and API access), multi-server lock contention.
+- **Persistence in the real experience (2026-11-04, after PR #2 merge, Rojo from `main`, Studio API access enabled by owner):**
+  - session 1: fresh load cash 1000 → buy Motorcycle (v8) → dispatch 18 s job (payout 74) → stop (BindToClose save). No DataStore warnings.
+  - session 2: cash 482, fleet [v1 Delivering, v8 Available], 1 active delivery, version 4 → state survived; delivery then paid: cash 556, xp 7, v1 Available, version 5.
+  - session 3: cash 556, xp 7, both vehicles Available, 0 active, version 5 → saved and **not paid twice**.
+  - Without API access the same build falls back to an unsaved in-memory session (observed earlier), as designed.
+
+**Not run:** multi-server session-lock contention (Studio JobId is empty, so the lock path between two live servers is untested until a live/private-server test).
 
 **Remaining risks / next:** Studio smoke test of the full loop; Lune CI job (needs an integrator PR to `.github/`); warehouse/research/expansion/monetization services; vehicle selling would break the never-stuck guarantee (noted in code).
