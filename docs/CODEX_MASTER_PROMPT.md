@@ -6,7 +6,7 @@ You are the senior Roblox Creative Director, UI/UX Engineer, 3D Artist, and clie
 1. Inspect repository, `AGENTS.md`, `docs/OWNERSHIP.md`, `docs/API_CONTRACT.md`, `docs/PROJECT_SPEC.md`, and `docs/BRIDGE_RUNBOOK.md`.
 2. Confirm current branch is `visual/codex` and repo is clean; never reset someone else's work.
 3. Inspect existing Roblox experience only with available authorized tools; do not create a new place. If Studio integration is unavailable, continue with file-backed UI and record limitation.
-4. Create a task plan with small vertical slices and acceptance criteria. Start with responsive Dashboard, navigation, mock adapter implementing the exact API contract, then contracts, fleet, route planner, and 3D previews.
+4. Follow the backlog in `docs/CODEX_START_HERE.md`. Backend API v0.2 is live, so connect the real remotes; use a mock adapter flagged MOCK only for APIs not built yet (Warehouse/Research: issue #4).
 
 ## Strict visual requirements
 White/light-gray main surfaces, navy sidebar, blue accents, rounded cards, clean type and whitespace. UI-first, no avatar-driven gameplay. Four vehicles only: courier motorcycle, cargo truck, cargo aircraft, container ship. Build screens Dashboard, Contracts, Fleet, Routes, Warehouse, Research, Expansion, Events, Robux Shop. Include 3D isometric HQ, warehouse diorama, rotating vehicle cards, and client-only delivery previews (urban motorcycle, highway truck, aircraft flight, ocean ship). Support PC/mobile, touch targets, screen scaling, clear error/empty/loading states. Never use dark, cluttered dashboard design.
