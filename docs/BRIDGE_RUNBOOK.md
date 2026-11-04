@@ -13,7 +13,8 @@ Laptop 1 Codex (`visual/codex`) and Laptop 2 Claude (`systems/claude`) use GitHu
 5. Integrator opens existing Studio place, connects Rojo plugin to the integration laptop Rojo server, verifies mapping on a **test copy or safe staging place** before applying to production place. Production publish requires human approval.
 
 ## Automation model
-- `scripts/agent_sync.py --role codex|claude`: fetch `origin/main`, fast-forward merge only if role branch clean and main is an ancestor-compatible update; otherwise log conflict and exit. It never pushes, auto-commits, auto-resolves, or touches other branch.
+- `scripts/agent_sync.py --role codex|claude`: fetch `origin/main` and update the clean role branch by fast-forward, or by a conflict-free merge when both sides moved; on any conflict it aborts and exits 3. It never pushes or touches other branches.
+- `scripts/agent_news.py --role codex|claude`: start-of-task briefing for agents: new merges on `main`, files the other side changed that you must read, branch sync (via agent_sync), open PRs and `api-change` issues.
 - `scripts/agent_watch.ps1 -Role codex|claude`: optional periodic safe sync every 60 seconds; only if no local edits. This does **not** run agents or trigger AI prompts; agents remain responsible for commits, PRs and implementation.
 - `scripts/integrator_sync.ps1`: on integration machine, pull fast-forward-only `main`, verify JSON/ownership-related project checks, start Rojo server. Operator must open Roblox Studio and connect plugin. Do not launch this on both laptops for same tree.
 - `.github/workflows/validate.yml`: PR checks; **no automatic merge or Roblox publish**. GitHub Actions cannot connect to a local Studio Team Create session by itself.
