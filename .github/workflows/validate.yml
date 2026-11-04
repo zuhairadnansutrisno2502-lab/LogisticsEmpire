@@ -1,50 +1,26 @@
-name: Validate Pull Request
+name: Test
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 permissions:
-  contents: read # least privilege: CI only reads the repo
-concurrency: # a new push cancels the stale run, so agents never read outdated results
-  group: validate-${{ github.event.pull_request.number }}
+  contents: read
+concurrency:
+  group: test-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  ownership:
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Ownership gate
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-          BASE_REF: origin/${{ github.base_ref }}
-        run: python3 scripts/check_ownership.py
-  project-validation:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate project configuration
+      - name: Rojo project parses
         run: python3 -m json.tool default.project.json > /dev/null
-      - name: Check Python syntax
-        run: python3 -m compileall -q scripts
-  python-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run starter structural tests
-        run: python3 scripts/test_project.py
-  luau-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Lune 0.10.5 (same version as rokit.toml, checksum pinned)
+      - name: Install Lune 0.10.5 (same as rokit.toml, checksum pinned)
         run: |
           curl -fsSL -o lune.zip https://github.com/lune-org/lune/releases/download/v0.10.5/lune-0.10.5-linux-x86_64.zip
           echo "1fb5dee6a1afa1d300092805c6e660fe06144d29dd68c45cf6956f040667f791  lune.zip" | sha256sum -c -
           unzip -q lune.zip -d "$RUNNER_TEMP/lune" && echo "$RUNNER_TEMP/lune" >> "$GITHUB_PATH"
-      - name: Run Luau tests
-        run: for t in tests/*.spec.luau; do [ -e "$t" ] || continue; lune run "$t"; done
+      - name: Luau tests
+        run: for t in tests/*.spec.luau; do lune run "$t"; done

@@ -48,7 +48,9 @@ Error codes: `BadRequest, RateLimited, NotLoaded, UnknownContract, ContractExpir
 Rate limit: 10 requests/second per player across all request remotes.
 
 ## Client Store (what the UI uses) — LIVE in `src/client/Controllers/Store.luau`
-Codex's UI never touches remotes. The bootstrap (`src/client/init.client.luau`) calls `require(UI.App).mount(Store)`.
+Codex's UI (LocalScripts in `StarterGui`) never touches remotes. It gets the Store with
+`require(Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("LogisticsClient"):WaitForChild("Controllers"):WaitForChild("Store"))`.
+The bootstrap (`src/client/init.client.luau`) starts the same module, so both share one state.
 
 | Member | Returns | Notes |
 |---|---|---|
@@ -62,7 +64,6 @@ Codex's UI never touches remotes. The bootstrap (`src/client/init.client.luau`) 
 | `Store.progress(delivery)` | number 0..1 | server-time based |
 | `Store.summary()` | `{activeDeliveries, activeRoutes, hubs, routes, fleet = {[type] = {count, busy}}}` or `nil` | Dashboard KPIs / fleet cards |
 | `Store.catalog()` | `Shared.Contracts` | read-only: vehicles, prices, routes, locations |
-| `Store.mock` | `false` | `UI/MockStore` sets `true` and shows a MOCK badge |
 
 `Rules` now lives in `src/shared/Contracts/Rules.luau` (shared by server and client; client use is display-only).
 

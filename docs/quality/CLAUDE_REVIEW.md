@@ -55,4 +55,7 @@ Record task, threat model, failure cases, root causes, regression tests, evidenc
 
 **Evidence:** `lune run tests/rules.spec.luau` → 17 passed (new: options mirror dispatch, and every offered option is accepted by `Rules.dispatch`; busy/over-capacity/late cases; progress clamps; summary counts). selene 0/0, luau-lsp strict on shared Rules clean, `rojo build` OK.
 
-**Not run yet:** Studio playtest of `Store` (runs after merge, when Laptop 2 auto-sync puts `main` into Logistics Empire).
+**Studio playtest (after merge, auto-sync delivered it in < 1 min):** client required the Store → loaded (cash 556, `Store.now()` within 0.8 s of `serverTime`); summary 2 motorcycles / 0 busy; `options` gave Motorcycle downtown-industrial (25 cash, 25 s); dispatch ok; immediate repeat → "Terlalu cepat, coba lagi" (rate limit); progress 0.07 after ~1 s → 1.00 after delivery; cash 620 (+89 payout); `changed` fired 2×; `notified` got "Delivery complete: +89 cash"; buying a Ship → "Uang tidak cukup".
+
+## 2026-11-04 — Workflow simplified
+Codex works directly in Studio (StarterGui / ReplicatedStorage.Art); the repo is Claude-only. Removed the ownership CI, branch roles, agent_news/agent_sync, Windows setup scripts and 13 prompt/setup docs; CI is one `test` job (project JSON + Lune). The bootstrap now only starts the Store; UI LocalScripts require it directly.
