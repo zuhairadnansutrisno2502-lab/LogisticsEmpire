@@ -1,6 +1,6 @@
 # Codex (Laptop 1) — START HERE
 
-Single entry point for Codex and any Codex subagents. Read this file once, fully. Open other docs only when a task needs them (token budget). Visual standards: `docs/CODEX_MASTER_PROMPT.md` + `docs/PROJECT_SPEC.md`.
+Single entry point for Codex and any Codex subagents. Read this file once, fully. Open other docs only when a task needs them (token budget). Game design (screens, numbers, statuses): `docs/PROJECT_SPEC.md`. Jobdesks: `docs/ROLES.md`. Visual standards: `docs/CODEX_MASTER_PROMPT.md`.
 
 ## 0. Current state (2026-11-04)
 - Repo (public): https://github.com/zuhairadnansutrisno2502-lab/LogisticsEmpire. `main` is protected: PR only, required checks `ownership`, `project-validation`, `python-tests`, `luau-tests`.
