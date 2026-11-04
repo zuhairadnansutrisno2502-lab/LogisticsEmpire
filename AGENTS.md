@@ -13,6 +13,9 @@ Codex `visual/codex` (+ `visual/<task>` for parallel subagents), Claude `systems
 - Once per clone: `git config core.hooksPath .githooks`. The pre-push hook blocks pushes to `main` and runs the CI checks (+ Luau tests if `lune` is installed) before anything leaves the laptop.
 - GitHub enforces the same on `main`: PR required, checks `ownership`, `project-validation`, `python-tests`, `luau-tests`, no force push.
 
+## Staying aware of the other agent
+Before every task, and again before opening a PR, run `python scripts/agent_news.py --role codex|claude`. It shows what landed on `main` since your last run, lists files the other side changed that you must read before coding, syncs your branch with `main` (fast-forward or conflict-free merge; never pushes), and lists open PRs and `api-change` issues. If it prints `READ before coding`, read those files first. If it prints `BLOCKED`, stop and resolve the conflict deliberately.
+
 ## Token budget (keep sessions cheap)
 - Read only what the task needs: usually `docs/OWNERSHIP.md` + `docs/API_CONTRACT.md` (+ `src/shared/Types` for payload shapes). Open `PROJECT_SPEC.md` / `BRIDGE_RUNBOOK.md` only for design or workflow questions.
 - Check CI with `gh pr checks <n>`; read logs only for a failed job: `gh run view <id> --log-failed`.

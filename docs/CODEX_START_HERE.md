@@ -68,7 +68,7 @@ Each task: acceptance criteria first; loading/empty/error states; touch targets 
 
 ## 5. Per-task loop
 acceptance criteria → design → implement → self-critique (match to reference, hierarchy, spacing, responsiveness, every button) → local preview → fix → note evidence in `docs/quality/CODEX_REVIEW.md` → `git push` (the hook runs checks) → PR to `main` with the template → `gh pr checks <n>` → Claude reviews data use/performance → owner merges → Laptop 2 syncs to Studio.
-- Sync your branch with merged work: `python scripts/agent_sync.py --role codex` (clean tree only; it refuses diverged branches).
+- **Before every task and before every PR:** `python scripts/agent_news.py --role codex`. It shows what Claude merged, the files you must read first (Store, Types, contract, rules), and syncs your branch with `main`.
 - After 3 failed fixes on one root cause: write the blocker in the PR/issue and move to independent work.
 - Mark anything not actually executed as "not run".
 
