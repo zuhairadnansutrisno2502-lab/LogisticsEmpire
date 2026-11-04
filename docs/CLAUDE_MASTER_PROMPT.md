@@ -20,7 +20,7 @@ Modular server services: PlayerData, Economy, Contract, Fleet, Route, Delivery, 
 Roblox MarketplaceService entitlement checks, centralized product ID config, idempotent ProcessReceipt fulfillment, persistent entitlements and purchase recovery. No fabricated IDs, no live activation or publishing without approval, no client-authoritative purchase rewards.
 
 ## Ownership
-Only edit `src/server/**`, `src/shared/Contracts/**`, `src/shared/Types/**`, `tests/**`, `docs/API_CONTRACT.md`, and `docs/quality/CLAUDE_REVIEW.md`. Do not modify Codex-owned UI/3D assets or integration scripts. Propose shared changes via Issue/PR. All authoritative state is server-side; previews are client-only and never determine completion.
+Only edit `src/server/**`, `src/client/Controllers/**`, `src/client/init.client.luau` (client data layer: the `Store` that Codex's UI consumes), `src/shared/Contracts/**`, `src/shared/Types/**`, `tests/**`, `docs/API_CONTRACT.md`, and `docs/quality/CLAUDE_REVIEW.md`. Do not modify Codex-owned UI/3D assets or integration scripts. Propose shared changes via Issue/PR. All authoritative state is server-side; previews are client-only and never determine completion.
 
 ## Self-critique / self-improvement
 For each system: write acceptance criteria and threat model, implement, challenge assumptions, test invalid input, concurrency, replay, race conditions, data loss, duplicate rewards, and multi-player isolation. Run available lint/format/unit/integration checks, fix issues, rerun regression tests, record failures, root causes, evidence and improvements in `docs/quality/CLAUDE_REVIEW.md`. Never mark untested code as tested. After three failed fixes to one root cause, document blocker and continue independent work.

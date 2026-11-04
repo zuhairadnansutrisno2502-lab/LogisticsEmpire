@@ -2,23 +2,25 @@
 
 Single source of truth for what the game is. Status tags: **LIVE** (in `main`, Studio-tested) · **PLANNED** (designed, API issue exists) · **IDEA** (direction only; needs owner approval before anyone builds it). Numbers marked LIVE come from `src/shared/Contracts`; if this doc and the code disagree, the code wins and this doc gets fixed.
 
+**Visual target:** `docs/reference/dashboard.webp` (approved reference for look, layout and art style).
+
 ## 1. Pitch and pillars
 UI-first Roblox logistics tycoon: grow a delivery company from one courier motorcycle to a fleet of trucks, cargo aircraft and container ships.
 - **Clear decisions:** every dispatch is a choice of contract × vehicle × route against a deadline and a cost.
 - **Steady progression:** every delivery funds the next upgrade.
 - **Calm, beautiful UI:** light surfaces, navy sidebar, readable at a glance on PC and mobile.
-- **3D that rewards:** HQ diorama, vehicle previews and delivery cinematics make progress visible. Cosmetic only.
+- **UI-first, illustrated:** the game is played through screens and cards. Art is mostly illustrated images in a glossy isometric 3D-render style (as in the reference); live 3D is minimal and optional.
 - **Fair and safe:** the server decides everything; monetization never breaks the economy.
 
 **Out of scope:** avatar driving, buses/passengers, PvP, combat, trading between players. Exactly four vehicle types: Motorcycle, Truck, Aircraft, Ship.
 **Platforms:** PC, mobile, tablet (console-safe layout). Target session 5–15 min, many returning sessions.
 
 ## 2. Core loop — LIVE
-Contract board → pick contract → pick vehicle → pick route → preview cost / travel time / payout → dispatch (server deducts cost) → wait real seconds (3D preview plays) → server pays once + XP → reinvest → bigger contracts.
+Contract board → pick contract → pick vehicle → pick route → preview cost / travel time / payout → dispatch (server deducts cost) → wait real seconds (live delivery card with progress bar) → server pays once + XP → reinvest → bigger contracts.
 **Meta loop:** level up and reinvest in fleet, research and warehouses (PLANNED), then unlock regions (IDEA).
 
 ## 3. World and routes — LIVE
-Locations: Downtown, Suburbs, Industrial, HarborCity. Routes are one-way (origin → destination). Time scale: 1 in-game travel hour = 60 real seconds.
+Locations (placeholder): Downtown, Suburbs, Industrial, HarborCity. **PLANNED v0.3:** replace them with Indonesian/regional cities as in the reference (Jakarta, Bandung, Surabaya, Makassar, Singapore, …), with a save migration that clears old contracts. Routes are one-way (origin → destination). Time scale: 1 in-game travel hour = 60 real seconds.
 
 | Route id | From → To | Mode | km | Vehicles (travel s / cost) |
 |---|---|---|---|---|
@@ -55,12 +57,13 @@ Max fleet 20. Vehicle status: Available / Delivering / Maintenance (Maintenance 
 **Balance targets (to tune after playtests):** first Truck within ~15 min, first Aircraft ~2 h, first Ship ~6 h.
 **Known balance issue:** an Aircraft job (90 s, ~35k profit) earns far more per minute than Truck or Ship, and starter progress to the first Truck is slower than the target. Tune before release, for example with lower air payout, contract scarcity, or turnaround time.
 
-## 7. Warehouse — PLANNED v0.3 (issue #4)
-Every player owns one Downtown warehouse with two upgrade tracks (max level 5, level n→n+1 costs `baseCost × 2^n`):
-- **Storage** (base 1,000): +10% payout per level for jobs that start at that location.
-- **Automation** (base 1,500): +5 cash per minute per level, paid in whole minutes; offline accrual capped at 8 h.
+## 7. Warehouse — PLANNED v0.3 (issue #4, aligned to the reference)
+Each hub warehouse has **one level** (start Lv.1, max Lv.10). The starter warehouse is "Gudang Utama" at the starter hub. Upgrade Lv.n → n+1 costs `2,000 × 2.5^(n−1)` (to tune). Effects per level above 1, applied to jobs that **start at that hub**:
+- **Kapasitas (capacity):** +10% payout
+- **Kecepatan Sorting:** −8% travel time (total capped at −50%)
+- **Efisiensi Operasional:** −4% dispatch cost
 
-More warehouses come with Expansion (IDEA). The 3D warehouse visibly grows with level.
+The UI shows "Lv.n → Lv.n+1", the three effect totals and an Upgrade button with the cost. More warehouses come with Expansion (IDEA). Passive automation income from the earlier draft is now IDEA.
 
 ## 8. Research — PLANNED v0.3 (issue #4)
 One-time cash purchases with prerequisites. Percentage effects stack.
@@ -94,15 +97,31 @@ Global layout: navy left sidebar (icons + labels, collapses to a bottom bar on m
 
 | Screen | Shows | Actions | API / status |
 |---|---|---|---|
-| Dashboard | company name, cash, level/XP bar, active deliveries with countdown, fleet summary, top contracts, 3D HQ | jump to Contracts / Fleet | LIVE: `RequestState`, `StateUpdated` |
+| Dashboard | see **Dashboard layout** below | jump to other screens | LIVE core; parts PLANNED/IDEA |
 | Contracts | board cards: route, cargo, payout, XP, deadline countdown, allowed vehicles | open Route Planner | LIVE |
 | Route Planner | chosen contract, eligible vehicles, routes between its locations, preview of cost / time / arrival vs deadline | Dispatch | LIVE: `RequestDispatch` (preview is display only) |
-| Fleet | vehicle cards with 3D rotating model, status, capacity, active job | Buy vehicle | LIVE: `RequestVehiclePurchase` (licenses PLANNED) |
-| Warehouse | 3D warehouse, storage/automation levels, next cost, income/min | Upgrade | PLANNED v0.3 → MOCK |
+| Fleet | vehicle cards with vehicle art, count, utilization bar, capacity, active job | Buy vehicle | LIVE: `RequestVehiclePurchase` (licenses PLANNED) |
+| Warehouse | warehouse art, Lv.n → n+1, effect totals, upgrade cost | Upgrade | PLANNED v0.3 → MOCK |
 | Research | tree with locked / available / done nodes | Research | PLANNED v0.3 → MOCK |
 | Expansion | region map | — | IDEA → layout + MOCK |
 | Events | active/upcoming events | — | IDEA → layout + MOCK |
 | Robux Shop | product cards | none until approved | IDEA → layout only |
+
+### Dashboard layout (from the reference)
+1. **Top bar:** avatar + "Selamat Datang, CEO!" + tagline · cash pill (the "+" opens the Shop, IDEA: hidden for now) · gems pill (IDEA, hidden) · VIP button (IDEA, hidden) · notifications bell (LIVE: `Notification`) · settings.
+2. **KPI row, 4 cards:**
+   - Pendapatan / menit with trend % (PLANNED v0.3: server `stats.revenuePerMinute`, `stats.revenueTrendPct`)
+   - Pengiriman Aktif (LIVE: count of active deliveries)
+   - Rute Aktif (LIVE: distinct `routeId` in flight)
+   - Reputasi (PLANNED v0.4; card hidden until the field exists)
+3. **Jaringan Perusahaan hero:** network illustration, "n Hub • n Rute • n Pengiriman", button "Kelola Jaringan" → Routes.
+4. **Pengiriman Aktif card:** "Live" badge, illustration for the delivery's vehicle type, "Origin → Destination (Vehicle)", ETA, and a progress bar from `startedAt` / `completesAt` / `serverTime` (LIVE). It cycles through active deliveries; empty state when there are none.
+5. **Kontrak Tersedia (n):** 3 rows + "Lihat Semua": cargo name (PLANNED v0.3 `cargoType`; until then "Kargo 42 kg"), route, payout pill, "Terima" → Route Planner.
+6. **Armada Saya (n):** one card per vehicle type with art, unit count and utilization bar (busy ÷ total, computed client-side) + "Lihat Semua".
+7. **Upgrade Cepat:** warehouse art, "Gudang Utama Lv.n → n+1", effect list, "Upgrade ($ cost)" (PLANNED v0.3).
+8. **Sidebar:** Dashboard, Contracts, Fleet, Routes, Warehouse, Research, Events, Robux Shop (badge "New"), plus the VIP Logistics Pass promo card (IDEA: hidden until monetization is approved).
+
+UI copy is Indonesian as in the reference (nav labels may stay English). Keep every string in one table for localization. Money format: `$ 32,480,000`.
 
 **Error messages** (map `errorCode` → text):
 - `InsufficientFunds` → "Not enough cash"
@@ -117,9 +136,10 @@ Global layout: navy left sidebar (icons + labels, collapses to a bottom bar on m
 - anything else → "Something went wrong"
 
 ## 14. Visual and 3D direction
-- Palette: Primary blue `#2D6FE1`, Background `#F7F9FC` (`VisualConfig`), navy sidebar, white cards, rounded corners, generous spacing, one accent colour. Never a dense dark dashboard.
-- 3D: isometric HQ diorama that grows with progress; rotating vehicle previews; four delivery scenes (motorcycle urban, truck highway, aircraft airport/flight, ship port/ocean) driven by `DeliveryUpdated`.
-- Performance: low-poly, one preview scene at a time, and previews disabled on low-end devices. The UI must work without 3D.
+- Palette and style per the reference: Primary blue `#2D6FE1`, Background `#F7F9FC` (`VisualConfig`), deep navy sidebar with a bright active pill, white cards with soft shadows and rounded corners, green for positive numbers and progress, gold for VIP/premium, bold rounded headings. Never a dense dark dashboard.
+- Art set (images, glossy isometric 3D-render style): network hero, 4 delivery scenes (motorcycle city, truck highway, aircraft airport, ship port), 4 vehicle card images, warehouse (look grows with level), VIP promo, icon set. Uploaded from the owner account in Studio; image IDs live in `VisualConfig`.
+- Live 3D (ViewportFrame) only where cheap and optional, e.g. a small rotating vehicle on the Fleet detail. No large 3D scenes.
+- Performance: images ≤ 1024 px and reused across screens. The UI must work if an image fails to load.
 - Audio (IDEA): soft UI clicks and a delivery-complete chime.
 
 ## 15. Onboarding — PLANNED (client only)
@@ -132,7 +152,7 @@ Each player has an isolated company; there is no interaction between players (le
 | Version | Content | Status |
 |---|---|---|
 | v0.2 | Core loop: contracts, fleet, routes, delivery, persistence | LIVE (backend) / UI in progress (Codex) |
-| v0.3 | Warehouse + Research | PLANNED (issue #4) |
+| v0.3 | Warehouse (single level) + Research + `cargoType` + revenue stats + city map | PLANNED (issue #4) |
 | v0.4 | Reputation + premium contracts | PLANNED |
 | v0.5 | Expansion (regions, extra warehouses) | IDEA |
 | v0.6 | Events | IDEA |
