@@ -47,6 +47,25 @@ Error codes: `BadRequest, RateLimited, NotLoaded, UnknownContract, ContractExpir
 
 Rate limit: 10 requests/second per player across all request remotes.
 
+## Client Store (what the UI uses) — LIVE in `src/client/Controllers/Store.luau`
+Codex's UI never touches remotes. The bootstrap (`src/client/init.client.luau`) calls `require(UI.App).mount(Store)`.
+
+| Member | Returns | Notes |
+|---|---|---|
+| `Store.get()` | `PlayerState` or `nil` | `nil` while loading; `changed` fires once loaded |
+| `Store.changed(fn)` | disconnect function | `fn(state)` after load and on every newer `StateUpdated` |
+| `Store.notified(fn)` | disconnect function | `fn({kind, message, referenceId?})`, e.g. delivery completed |
+| `Store.now()` | number | server Unix time (`Workspace:GetServerTimeNow()`); use for every countdown |
+| `Store.options(contract)` | `{ {vehicle, route, cost, seconds, onTime, affordable} }` | one entry per Available vehicle type × drivable route, fastest first; computed with the shared `Rules`, so the server accepts every option with `onTime and affordable` |
+| `Store.dispatch(contractId, vehicleId, routeId)` | `(ok, message?)` | yields; `message` is Indonesian player-facing text |
+| `Store.buyVehicle(vehicleType)` | `(ok, message?)` | yields |
+| `Store.progress(delivery)` | number 0..1 | server-time based |
+| `Store.summary()` | `{activeDeliveries, activeRoutes, hubs, routes, fleet = {[type] = {count, busy}}}` or `nil` | Dashboard KPIs / fleet cards |
+| `Store.catalog()` | `Shared.Contracts` | read-only: vehicles, prices, routes, locations |
+| `Store.mock` | `false` | `UI/MockStore` sets `true` and shows a MOCK badge |
+
+`Rules` now lives in `src/shared/Contracts/Rules.luau` (shared by server and client; client use is display-only).
+
 ## Sample (new player, for mock adapters)
 ```lua
 {
