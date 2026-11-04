@@ -23,9 +23,11 @@ class StarterTests(unittest.TestCase):
         self.assertEqual(violations('visual/codex', ['src/client/UI/App.luau', 'assets/x.rbxm']), [])
         self.assertEqual(violations('visual/codex-fleet', ['src/server/init.server.luau']), ['src/server/init.server.luau'])
         self.assertEqual(violations('systems/claude', ['src/server/Services/Rules.luau', 'tests/a.spec.luau']), [])
-        self.assertEqual(violations('systems/claude', ['src/client/init.client.luau']), ['src/client/init.client.luau'])
+        self.assertEqual(violations('systems/claude', ['src/client/Controllers/Store.luau', 'src/client/init.client.luau']), [])
+        self.assertEqual(violations('systems/claude', ['src/client/UI/App.luau']), ['src/client/UI/App.luau'])
+        self.assertEqual(violations('visual/codex', ['src/client/Controllers/Store.luau']), ['src/client/Controllers/Store.luau'])
         self.assertEqual(violations('integration/x', ['.github/workflows/validate.yml', 'docs/SETUP_STATUS.md']), [])
-        self.assertEqual(violations('integration/x', ['docs/API_CONTRACT.md', 'src/client/a.luau']), ['docs/API_CONTRACT.md', 'src/client/a.luau'])
+        self.assertEqual(violations('integration/x', ['docs/API_CONTRACT.md', 'src/client/UI/a.luau']), ['docs/API_CONTRACT.md', 'src/client/UI/a.luau'])
         self.assertIsNone(violations('feature/x', ['README.md']))
 if __name__ == '__main__':
     unittest.main()
