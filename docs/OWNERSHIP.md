@@ -2,8 +2,8 @@
 
 | Path | Owner |
 | --- | --- |
-| `src/client/**`, `src/shared/VisualConfig/**`, `assets/**` | Codex |
-| `src/server/**`, `src/shared/Contracts/**`, `src/shared/Types/**`, `tests/**`, `docs/API_CONTRACT.md` | Claude |
+| `src/client/UI/**`, `src/client/Visuals/**`, `src/shared/VisualConfig/**`, `assets/**` | Codex (visual design, UI/UX, art) |
+| `src/server/**`, `src/client/Controllers/**`, `src/client/init.client.luau`, `src/shared/Contracts/**`, `src/shared/Types/**`, `tests/**`, `docs/API_CONTRACT.md` | Claude (all technical code) |
 | `docs/quality/CODEX_REVIEW.md` | Codex |
 | `docs/quality/CLAUDE_REVIEW.md` | Claude |
 | `.github/**`, `scripts/**`, `default.project.json`, `AGENTS.md`, `docs/BRIDGE_RUNBOOK.md`, `docs/PROJECT_SPEC.md` | Integrator only |

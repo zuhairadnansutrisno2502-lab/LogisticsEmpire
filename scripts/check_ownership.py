@@ -10,8 +10,10 @@ import subprocess
 import sys
 
 AGENT_PATHS = {
-    'visual/': ('src/client/', 'src/shared/VisualConfig/', 'assets/', 'docs/quality/CODEX_REVIEW.md'),
-    'systems/': ('src/server/', 'src/shared/Contracts/', 'src/shared/Types/', 'tests/', 'docs/API_CONTRACT.md', 'docs/quality/CLAUDE_REVIEW.md'),
+    # Codex: visual design, UI/UX, art
+    'visual/': ('src/client/UI/', 'src/client/Visuals/', 'src/shared/VisualConfig/', 'assets/', 'docs/quality/CODEX_REVIEW.md'),
+    # Claude: all technical code, incl. the client data layer and bootstrap
+    'systems/': ('src/server/', 'src/client/Controllers/', 'src/client/init.client.luau', 'src/shared/Contracts/', 'src/shared/Types/', 'tests/', 'docs/API_CONTRACT.md', 'docs/quality/CLAUDE_REVIEW.md'),
 }
 ALL_AGENT_PATHS = tuple(p for paths in AGENT_PATHS.values() for p in paths)
 
