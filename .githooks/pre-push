@@ -13,7 +13,10 @@ while read -r _local_ref _local_sha remote_ref _remote_sha; do
 done
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
-PY=$(command -v python3 || command -v python)
+PY=""
+for c in python3 python; do # Windows may have a non-working python3 Store alias
+	"$c" -c "" >/dev/null 2>&1 && PY=$c && break
+done
 [ -n "$PY" ] || { echo "pre-push: python not found" >&2; exit 1; }
 fail() { echo "pre-push: $1 failed, push cancelled." >&2; exit 1; }
 
@@ -23,7 +26,7 @@ fail() { echo "pre-push: $1 failed, push cancelled." >&2; exit 1; }
 
 branch=$(git branch --show-current)
 case "$branch" in
-visual/codex | systems/claude)
+visual/* | systems/* | integration/*)
 	git fetch -q origin main 2>/dev/null
 	HEAD_REF="$branch" BASE_REF=origin/main "$PY" scripts/check_ownership.py || fail "ownership"
 	;;
